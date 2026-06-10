@@ -25,7 +25,7 @@ function renderHero(data) {
     slide.className = `hero-slide min-w-full relative h-[450px] md:h-[550px] flex items-center transition-all duration-700 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0 absolute'}`;
     slide.innerHTML = `
       <div class="absolute inset-0 z-0">
-        <img src="${anime.image_cover}" class="w-full h-full object-cover opacity-40">
+        <img src="https://proxy-phi-two-35.vercel.app/proxy?url=${anime.image_cover}" class="w-full h-full object-cover opacity-40">
         <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#faf5ff] via-[#faf5ff]/80 to-transparent"></div>
       </div>
       <div class="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center md:items-start text-center md:text-left">
@@ -73,7 +73,7 @@ function renderOngoing(data) {
     card.className = "group cursor-pointer";
     card.innerHTML = `
       <div class="relative aspect-[3/4] rounded-2xl overflow-hidden mb-2 shadow-sm transition-transform group-hover:-translate-y-1">
-        <img src="${anime.image_poster}" class="w-full h-full object-cover">
+        <img src="https://proxy-phi-two-35.vercel.app/proxy?url=${anime.image_poster}" class="w-full h-full object-cover">
         <div class="absolute top-2 left-2 bg-[#9333ea] text-white text-[9px] font-bold px-2 py-1 rounded-lg">EPS ${anime.time.split(' ')[0] || '?'}</div>
         <div class="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
           <span class="text-white text-[10px] font-bold">SUB INDO</span>
@@ -106,7 +106,7 @@ function setupSearch() {
         const div = document.createElement('div');
         div.className = "flex items-center gap-3 p-2 hover:bg-[#f3e8ff] cursor-pointer transition-colors";
         div.innerHTML = `
-          <img src="${item.image_poster}" class="w-10 h-14 object-cover rounded-lg">
+          <img src="https://proxy-phi-two-35.vercel.app/proxy?url=${item.image_poster}" class="w-10 h-14 object-cover rounded-lg">
           <div>
             <div class="text-[11px] font-bold text-[#581c87] line-clamp-1">${item.title}</div>
             <div class="text-[9px] text-[#9333ea]">${item.type} • ${item.year}</div>
