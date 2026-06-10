@@ -552,9 +552,12 @@ const Home = () => {
                                 <
                                 div className = "relative aspect-[3/4.5] overflow-hidden bg-[#16161a] rounded-sm shadow-xl" >
                                 <
+                                <
                                 img src = {
-                                    a.image_poster
+                                    `https://proxy-phi-two-35.vercel.app/proxy?url=${encodeURIComponent(a.image_poster)}`
                                 }
+                                referrerPolicy = "no-referrer" /
+                                >
                                 referrerPolicy = "no-referrer"
                                 className = "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" / >
                                 <
