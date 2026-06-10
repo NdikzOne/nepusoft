@@ -191,10 +191,10 @@ const Home = () => {
           <div className={`flex h-full ${isTransitioning ? 'transition-transform duration-700' : ''}`} style={{ transform: `translate3d(-${heroIndex * 100}%, 0, 0)` }}>
             {carouselItems.map((a, i) => (
               <div key={i} className="min-w-full h-full relative">
-                <img src={a.image_cover || a.image_poster} referrerPolicy="no-referrer" className="w-full h-full object-cover opacity-60" />
+                <img src="https://proxy-phi-two-35.vercel.app/proxy?url="{a.image_cover || a.image_poster} referrerPolicy="no-referrer" className="w-full h-full object-cover opacity-60" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-[#0a0a0c]/40 to-transparent"></div>
                 <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 flex items-end gap-4 md:gap-6 z-10 w-[calc(100%-48px)] md:w-[calc(100%-96px)] max-w-7xl mx-auto pr-8 md:pr-0">
-                  <img src={a.image_poster || a.image_cover} referrerPolicy="no-referrer" className="w-24 md:w-40 aspect-[3/4.2] object-cover rounded-md shadow-2xl shrink-0" />
+                  <img src="https://proxy-phi-two-35.vercel.app/proxy?url="{a.image_poster || a.image_cover} referrerPolicy="no-referrer" className="w-24 md:w-40 aspect-[3/4.2] object-cover rounded-md shadow-2xl shrink-0" />
                   <div className="flex flex-col text-left mb-1 md:mb-2 gap-1 md:gap-1.5 flex-1 min-w-0">
                     <h2 className="text-lg md:text-3xl font-black text-white tracking-tight leading-tight line-clamp-2">{a.title}</h2>
                     <p className="text-[10px] md:text-xs text-white/50 line-clamp-2 max-w-2xl leading-relaxed">{a.synopsis}</p>
