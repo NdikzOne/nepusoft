@@ -1,10 +1,4 @@
-import { Redis } from '@upstash/redis';
 import { OAuth2Client } from 'google-auth-library';
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
 
 export default async function handler(req, res) {
   const oauth2Client = new OAuth2Client(
