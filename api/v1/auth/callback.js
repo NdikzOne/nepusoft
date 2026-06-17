@@ -1,5 +1,7 @@
 import { Redis } from '@upstash/redis';
 import { OAuth2Client } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
+import cookie from 'cookie';
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
@@ -19,7 +21,6 @@ export default async function handler(req, res) {
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
-    // Get user info
     const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` }
     });
@@ -31,13 +32,25 @@ export default async function handler(req, res) {
       name: userInfo.name,
       email: userInfo.email,
       picture: userInfo.picture,
-      accessToken: tokens.access_token,
     };
 
     await redis.set(`user:${userInfo.id}`, JSON.stringify(user));
 
-    // Set cookie untuk session
-    res.setHeader('Set-Cookie', `userId=${userInfo.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`);
+    // Create JWT token
+    const token = jwt.sign(
+      { userId: userInfo.id, email: userInfo.email },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
+    );
+
+    // Set cookie with JWT
+    res.setHeader('Set-Cookie', cookie.serialize('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7 // 7 days
+    }));
 
     // Redirect ke frontend
     res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/home`);
