@@ -14,7 +14,7 @@ const WatchSkeleton = () => (
       <img src="/img/kaguya.webp" alt="Loading" className="w-24 md:w-32 object-contain relative z-20 mb-4 opacity-50" />
       <p className="text-[#F6CF80] text-xs md:text-sm font-bold text-center px-4 relative z-20">sabar yaa, server kami butuh waktu untuk merespon 😖</p>
     </div>
-
+    
     <div className="flex flex-col gap-3 w-full mb-8">
       <div className="flex gap-3 w-full">
         <div className="flex-1 h-12 md:h-14 bg-[#16161a] rounded-lg relative overflow-hidden border border-white/5"><ShimmerEffect /></div>
@@ -86,7 +86,7 @@ const Watch = () => {
   const playerContainerRef = useRef(null);
   const progressContainerRef = useRef(null);
   const isDraggingRef = useRef(false);
-
+  
   const [isPlaying, setIsPlaying] = useState(false);
   const[progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -99,7 +99,7 @@ const Watch = () => {
   const[isBuffering, setIsBuffering] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [autoNext, setAutoNext] = useState(() => localStorage.getItem('nefusoft_autonext') === 'true');
-
+  
   const [hoverPos, setHoverPos] = useState({ x: 0, time: 0, show: false });
   const [seekPopup, setSeekPopup] = useState(null);
 
@@ -114,7 +114,7 @@ const Watch = () => {
 
   useEffect(() => {
     if (!id) return;
-
+    
     const updateMetaTags = (title, desc, image) => {
       document.title = title;
       const tags =[
@@ -149,10 +149,10 @@ const Watch = () => {
           const shareTitle = `Tonton ${res.data.title} - NefuSoft`;
           const shareDesc = res.data.synopsis ? res.data.synopsis.substring(0, 150) + '...' : 'Streaming anime subtitle Indonesia gratis.';
           const shareImg = res.data.image_poster || res.data.image_cover;
-
+          
           updateMetaTags(shareTitle, shareDesc, shareImg);
         }
-
+        
         const recRes = await fetch('/api/v1/popular?page=1').then(r => r.json());
         if (recRes.status && recRes.data) {
           setRecommendations(recRes.data.slice(0, 5));
@@ -160,7 +160,7 @@ const Watch = () => {
       } catch (e) {}
       setIsLoading(false);
     };
-
+    
     fetchDetail();
 
     return () => {
@@ -198,7 +198,7 @@ const Watch = () => {
         if (res.status && res.data) {
           const mp4Servers = (res.data.server ||[]).filter(s => s.link && s.type === 'direct' && !s.link.includes('embed=true') && s.link.split('?')[0].endsWith('.mp4'));
           const uniqueServers = Array.from(new Map(mp4Servers.map(s => [s.quality, s])).values());
-
+          
           setServers(uniqueServers);
           if (uniqueServers.length > 0) {
             setSelectedServer(uniqueServers.find(s => s.quality === '720p') || uniqueServers.reduce((p, c) => (parseInt(c.quality) > parseInt(p.quality) ? c : p)));
@@ -297,18 +297,18 @@ const Watch = () => {
     const rect = progressContainerRef.current.getBoundingClientRect();
     let clientX = e.clientX;
     if (e.touches && e.touches.length > 0) clientX = e.touches[0].clientX;
-
+    
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
     const hoverTime = (x / rect.width) * duration;
-
+    
     setHoverPos({ x, time: hoverTime, show: true });
-
+    
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext('2d', { willReadFrequently: true });
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, 160, 90);
     }
-
+    
     clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = setTimeout(() => {
       if (hiddenVideoRef.current && hiddenVideoRef.current.readyState >= 1) {
@@ -385,11 +385,11 @@ const Watch = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   },[]);
 
-  const getProxyUrl = (url) => url ? `https://proxy-phi-two-35.vercel.app/proxy?url=${url}` : '';
+  const getProxyUrl = (url) => url ? `https://proxy-phi-two-35.vercel.app/stream?url=${url}` : '';
 
   const epIndex = episodes.findIndex(e => e.id === currentEpId);
   const currentEpNum = episodes.find(e => e.id === currentEpId)?.index || '0';
-
+  
   const toggleAutoNext = () => {
     setAutoNext(prev => {
       const val = !prev;
@@ -414,7 +414,7 @@ const Watch = () => {
           const response = await fetch(getProxyUrl(imgUrl));
           const blob = await response.blob();
           const file = new File([blob], 'cover.jpg', { type: blob.type });
-
+          
           if (navigator.canShare({ files: [file] })) {
             await navigator.share({
               files: [file],
@@ -484,11 +484,11 @@ const Watch = () => {
           {toast}
         </div>
       )}
-
+      
       <Navbar />
 
       <div className="pt-20 max-w-7xl mx-auto px-4 md:px-6">
-
+        
         {isLoading ? (
           <WatchSkeleton />
         ) : (
@@ -524,7 +524,7 @@ const Watch = () => {
 
                   {!hasStarted && anime?.image_cover && (
                     <div className="absolute inset-0 z-0">
-                      <img src={anime.image_cover} referrerPolicy="no-referrer" alt="Thumbnail" className="w-full h-full object-cover opacity-60" />
+                      <img src={`https://proxy-phi-two-35.vercel.app/proxy?url=${anime.image_cover}`} referrerPolicy="no-referrer" alt="Thumbnail" className="w-full h-full object-cover opacity-60" />
                       <div className="absolute inset-0 bg-black/40"></div>
                     </div>
                   )}
@@ -598,7 +598,7 @@ const Watch = () => {
                 )}
 
                 <div className={`absolute inset-0 transition-opacity duration-300 flex flex-col justify-between z-30 pointer-events-none ${showControls ? 'opacity-100 bg-black/40' : 'opacity-0'}`}>
-
+                  
                   <div className="p-4 flex items-center gap-4 pointer-events-auto bg-gradient-to-b from-black/80 to-transparent pb-12" onClick={e => e.stopPropagation()}>
                     <button onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/home')} className="w-8 h-8 md:w-10 md:h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-[#F6CF80] hover:text-black transition-colors shrink-0">
                       <svg className="w-5 h-5 md:w-6 md:h-6 pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
@@ -746,7 +746,7 @@ const Watch = () => {
 
             <div className="relative bg-[#16161a] p-5 md:p-6 rounded-xl border border-white/5 mb-8 overflow-hidden shadow-xl">
                <div className="absolute inset-0 z-0">
-                  <img src={anime.image_cover || anime.image_poster} referrerPolicy="no-referrer" alt="" className="w-full h-full object-cover opacity-40" />
+                  <img src={`https://proxy-phi-two-35.vercel.app/proxy?url=${anime.image_cover || anime.image_poster}`} referrerPolicy="no-referrer" alt="" className="w-full h-full object-cover opacity-40" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#16161a] via-[#16161a]/90 to-transparent"></div>
                </div>
                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -796,16 +796,16 @@ const Watch = () => {
             {anime && (
               <div className="mb-8 relative bg-[#16161a] rounded-sm border border-white/5 overflow-hidden shadow-xl flex flex-col items-center md:items-start">
                 <div className="absolute inset-0 z-0">
-                  <img src={anime.image_cover || anime.image_poster} referrerPolicy="no-referrer" alt="Banner" className="w-full h-full object-cover blur-md opacity-20" />
+                  <img src={`https://proxy-phi-two-35.vercel.app/proxy?url=${anime.image_cover || anime.image_poster}`} referrerPolicy="no-referrer" alt="Banner" className="w-full h-full object-cover blur-md opacity-20" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#16161a] via-[#16161a]/90 to-transparent"></div>
                 </div>
 
                 <div className="relative z-10 p-6 flex flex-col md:flex-row gap-6 w-full items-center md:items-start">
-                   <img src={anime.image_poster} referrerPolicy="no-referrer" alt={anime.title} className="w-32 md:w-48 aspect-[3/4.2] object-cover rounded-sm shadow-[0_15px_30px_rgba(0,0,0,0.5)] shrink-0" />
+                   <img src={`https://proxy-phi-two-35.vercel.app/proxy?url=${anime.image_poster}`} referrerPolicy="no-referrer" alt={anime.title} className="w-32 md:w-48 aspect-[3/4.2] object-cover rounded-sm shadow-[0_15px_30px_rgba(0,0,0,0.5)] shrink-0" />
                   <div className="flex flex-col flex-1 w-full text-center md:text-left">
                     <h2 className="text-xl md:text-3xl font-black text-white mb-2 leading-tight tracking-tighter">{anime.title}</h2>
                     <p className="text-white/50 text-[10px] md:text-xs mb-5 font-bold uppercase tracking-widest">{anime.synonyms}</p>
-
+                    
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-6">
                       <span className="bg-[#F6CF80] text-black text-[9px] px-2.5 py-1 rounded-sm uppercase font-black tracking-widest">{anime.type}</span>
                       <span className="bg-white/10 text-white/80 text-[9px] px-2.5 py-1 rounded-sm uppercase font-bold tracking-widest border border-white/5">{anime.status}</span>
@@ -857,10 +857,10 @@ const Watch = () => {
                 <div key={a.id} onClick={() => navigate(`/anime/${a.id}-${(a.title||'').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`)} className="group cursor-pointer relative h-20 md:h-24 rounded-sm bg-[#16161a] border border-white/5 flex items-center px-4 overflow-hidden transition-transform active:scale-[0.98]">
                   <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-1/3 z-0">
                     <div className="absolute inset-0 bg-gradient-to-r from-[#16161a] via-[#16161a]/80 to-transparent z-10"></div>
-                    <img src={a.image_cover || a.image_poster} referrerPolicy="no-referrer" className="w-full h-full object-cover opacity-40 group-hover:opacity-80 transition-opacity duration-500" />
+                    <img src={`https://proxy-phi-two-35.vercel.app/proxy?url=${a.image_cover || a.image_poster}`} referrerPolicy="no-referrer" className="w-full h-full object-cover opacity-40 group-hover:opacity-80 transition-opacity duration-500" />
                   </div>
                   <div className="relative z-20 flex items-center gap-4 w-full">
-                    <img src={a.image_poster} referrerPolicy="no-referrer" className="w-12 md:w-16 aspect-[3/4.2] object-cover rounded-sm shadow-lg group-hover:scale-105 transition-transform" />
+                    <img src={`https://proxy-phi-two-35.vercel.app/proxy?url=${a.image_poster}`} referrerPolicy="no-referrer" className="w-12 md:w-16 aspect-[3/4.2] object-cover rounded-sm shadow-lg group-hover:scale-105 transition-transform" />
                     <div className="flex flex-col">
                       <h3 className="text-white font-bold text-[11px] md:text-sm line-clamp-1 group-hover:text-[#F6CF80] transition-colors">{a.title}</h3>
                       <div className="flex items-center gap-2 mt-2">
